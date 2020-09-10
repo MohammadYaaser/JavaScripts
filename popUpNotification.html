@@ -1,0 +1,146 @@
+<style>
+
+  .stellarNotification {
+    display: none;
+    position: fixed;
+    left: 37%;
+    top: 35px;
+    padding: 10px 25px;
+    background: rgb(255, 235, 156);
+    border: thin solid rgb(230 211 188);
+    max-width: 222px;
+  }
+
+  @media all and (max-width: 1300px) {
+    .stellarNotification .message {
+      font-size: 14px !important;
+    }
+  }
+
+  .stellarNotification .message {
+    padding: 5px;
+    color: rgb(156, 87, 0);
+    font-size: 14px;
+    line-height: 20px;
+    text-align: justify;
+  }
+
+  .stellarNotification input[type="button"] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    outline: 0;
+    border: 0;
+    background: none;
+    color: rgb(156, 87, 0);
+  }
+
+  .stellarNotification input[type="button"]:hover {
+    transition: 0.3s;
+    cursor: pointer;
+    background: none;
+    color: red;
+  }
+
+</style>
+
+<script src="js/jquery-3.2.1.min.js"></script>
+
+<script>
+  var currentCallback;
+  var warnBoxBgCol = "rgb(255, 199, 206)";
+  var warnBoxBorderCol = "thin solid rgb(236 185 187)";
+  var warnBoxFontCol = "rgb(156, 0, 6)";
+
+  var genBoxBgCol = "rgb(255, 235, 156)";
+  var genBoxBorderCol = "thin solid rgb(230 211 188)";
+  var genBoxFontCol = "rgb(156, 87, 0)";
+
+  // override default browser alert
+  window.alert = function (msg, callback) {
+    $('.message').text(msg);
+    $('.stellarNotification').css({
+      'animation': 'fadeIn 0.3s linear',
+      'display': 'inline'
+    });
+    currentCallback = callback;
+  }
+
+  // jquery starts
+  $(function () {
+
+    //set color for General pop up
+    function setGenPopUpColor(className) {
+      $('.' + className).css({
+        'background': genBoxBgCol,
+        'border': genBoxBorderCol,
+        'color': genBoxFontCol
+      });
+    }
+
+    //set color for Warning pop up
+    function setWarnPopUpColor(className) {
+      $('.' + className).css({
+        'background': warnBoxBgCol,
+        'border': warnBoxBorderCol,
+        'color': warnBoxFontCol
+      });
+    }
+
+    // User friendly stellar notification
+    function openPopUpNotification(className, message, time) {
+      setGenPopUpColor(className);
+      alert(message);
+      hideElementOnTime(className, time);
+    }
+
+    // show this notification for max export option.
+    function warningNotification(className, message, time) {
+      setWarnPopUpColor(className);
+      alert(message);
+      hideElementOnTime(className, time);
+    }
+
+    // close openPopUpNotification
+    function closePopUpNotification(className) {
+      $("." + className).css('animation', 'fadeOut 0.3s linear');
+      hideElement(className);
+    }
+
+    // hide element after a time
+    function hideElementOnTime(element, time) {
+      setTimeout(function () {
+        hideElement(element);
+      }, time);
+    }
+
+    // hide elements
+    function hideElement(element) {
+      $('.' + element).css({'animation': 'none', 'display': 'none'});
+    }
+
+    // onclick open popup
+    $(".search-button2").click(function () {
+      openPopUpNotification("stellarNotification", "Retrieving from Data Base, please wait...", 5000);
+    });
+
+    // onclick open Warning popup
+    $(".link").click(function () {
+      warningNotification("stellarNotification", "Cannot Export huge data.", 5000);
+    });
+
+    $(".confirmButton").click(function () {
+      closePopUpNotification("stellarNotification");
+    });
+  });
+</script>
+
+<div class="stellarNotification">
+    <input type='button' class='confirmButton' value='X'>
+    <p class='message'></p>
+</div>
+
+<input type='button' class="search-button2" value='Raise alert'>
+<input type='button' class="link" value='Raise Red Alert'>
